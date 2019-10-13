@@ -19,13 +19,13 @@ namespace ProcSharpCore
             window = SDL_CreateWindow("ProcSharp",
                 SDL_WINDOWPOS_CENTERED,
                 SDL_WINDOWPOS_CENTERED,
-                1020,
-                800,
+                100,
+                100,
                 SDL_WindowFlags.SDL_WINDOW_RESIZABLE
             );
 
             renderer = SDL_CreateRenderer(window, -1, SDL_RendererFlags.SDL_RENDERER_ACCELERATED);
-            SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+            SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
 
             if (window == IntPtr.Zero)
             {

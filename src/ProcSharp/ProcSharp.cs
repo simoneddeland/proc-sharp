@@ -15,14 +15,52 @@ namespace ProcSharpCore
         private static bool quit = false;
 
         private static Initializer initializer;
+        private static Mouse mouse;
+        
+        private static SDL_Color fillColor;
+        private static SDL_Color strokeColor;
+
+        #region PUBLIC_CONSTANTS
+
+        /// <summary>
+        /// The left mouse button
+        /// </summary>
+        public const uint LEFT = 1;
+
+        /// <summary>
+        /// The middle mouse button
+        /// </summary>
+        public const uint MIDDLE = 2;
+
+        /// <summary>
+        /// The right mouse button
+        /// </summary>
+        public const uint RIGHT = 3;
+
+        #endregion
 
         public static void Initialize(Type type, object game)
         {
             gameType = type;
             gameObject = game;
 
+            // Default fill white
+            fillColor.r = 255;
+            fillColor.g = 255;
+            fillColor.b = 255;
+            fillColor.a = 255;
+
+            // Default stroke gray
+            strokeColor.r = 100;
+            strokeColor.g = 100;
+            strokeColor.b = 100;
+            strokeColor.a = 255;
+
             initializer = new Initializer();
             initializer.Initialize(ref window, ref renderer);
+
+            // Set up all services
+            mouse = new Mouse(gameType, gameObject);
 
             var userSetup = gameType.GetMethod("Setup");
 
@@ -31,6 +69,7 @@ namespace ProcSharpCore
 
             SDL_RenderClear(renderer);
             SDL_RenderPresent(renderer);
+            
 
             // Start the main loop
             MainLoop();
@@ -44,6 +83,9 @@ namespace ProcSharpCore
 
             while (!quit)
             {
+                // Update services
+                mouse.Update();
+
                 while (SDL_PollEvent(out e) != 0)
                 {
                     switch (e.type)
@@ -52,21 +94,26 @@ namespace ProcSharpCore
                             quit = true;
                             break;
 
-                        case SDL_EventType.SDL_KEYDOWN:
-                            switch (e.key.keysym.sym)
-                            {
-                                case SDL_Keycode.SDLK_q:
-                                    quit = true;
-                                    break;
-                            }
+                        case SDL_EventType.SDL_MOUSEBUTTONDOWN:
+                            mouse.MouseButtonDown(e);
                             break;
+
+                        case SDL_EventType.SDL_MOUSEBUTTONUP:
+                            mouse.MouseButtonUp(e);
+                            break;
+
+                        case SDL_EventType.SDL_MOUSEWHEEL:
+                            mouse.MouseWheel(e);
+                            break;
+
                     }
-
-                    // Call the users draw function
-                    userDraw?.Invoke(gameObject, null);
-                    SDL_RenderPresent(renderer);
-
                 }
+
+                // Call the users draw function
+                userDraw?.Invoke(gameObject, null);
+
+                // Render to the screen
+                SDL_RenderPresent(renderer);
             }
 
             InternalExit();
@@ -80,43 +127,148 @@ namespace ProcSharpCore
             SDL_Quit();
         }
 
-
-
-        #region Public methods
-        public static void Color(float r, float g, float b, float a)
+        private static void SetColor(SDL_Color color)
         {
-            SDL_SetRenderDrawColor(renderer, Convert.ToByte(r), Convert.ToByte(g), Convert.ToByte(b), Convert.ToByte(a));
+            SDL_SetRenderDrawColor(renderer, color.r, color.b, color.g, color.a);
         }
 
 
 
+        #region Public methods
+
+        /// <summary>
+        /// Sets the stroke color
+        /// </summary>
+        /// <param name="rgb">The RGB part of the color (all get the same value)</param>
+        public static void Fill(float rgb)
+        {
+            fillColor.r = Convert.ToByte(rgb);
+            fillColor.g = Convert.ToByte(rgb);
+            fillColor.b = Convert.ToByte(rgb);
+            fillColor.a = 255;
+        }
+
+        /// <summary>
+        /// Sets the fill color
+        /// </summary>
+        /// <param name="r">Red part of the color, 0 - 255</param>
+        /// <param name="g">Green part of the color, 0 - 255</param>
+        /// <param name="b">Blue part of the color, 0 - 255</param>
+        /// <param name="a">Alpha part of the color, 0 - 255</param>
+        public static void Fill(float r, float g, float b, float a)
+        {
+            fillColor.r = Convert.ToByte(r);
+            fillColor.g = Convert.ToByte(g);
+            fillColor.b = Convert.ToByte(b);
+            fillColor.a = Convert.ToByte(a);
+        }
+
+        /// <summary>
+        /// Sets the stroke color
+        /// </summary>
+        /// <param name="rgb">The RGB part of the color (all get the same value)</param>
+        public static void Stroke(float rgb)
+        {
+            strokeColor.r = Convert.ToByte(rgb);
+            strokeColor.g = Convert.ToByte(rgb);
+            strokeColor.b = Convert.ToByte(rgb);
+            strokeColor.a = 255;
+        }
+
+        /// <summary>
+        /// Sets the stroke color
+        /// </summary>
+        /// <param name="r">Red part of the color, 0 - 255</param>
+        /// <param name="g">Green part of the color, 0 - 255</param>
+        /// <param name="b">Blue part of the color, 0 - 255</param>
+        /// <param name="a">Alpha part of the color, 0 - 255</param>
+        public static void Stroke(float r, float g, float b, float a)
+        {
+            strokeColor.r = Convert.ToByte(r);
+            strokeColor.g = Convert.ToByte(g);
+            strokeColor.b = Convert.ToByte(b);
+            strokeColor.a = Convert.ToByte(a);            
+        }
+
+        /// <summary>
+        /// Sets the window size
+        /// </summary>
+        /// <param name="width">Width of the window in pixels</param>
+        /// <param name="height">Height of the window in pixels</param>
+        public static void Size(int width, int height)
+        {
+            SDL_SetWindowSize(window, width, height);
+            SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+        }
+
+        /// <summary>
+        /// Exits the program after the current Draw has finished
+        /// </summary>
         public static void Exit()
         {
             quit = true;
         }
 
+        #region Mouse
+        /// <summary>
+        /// The X-coordinate of the mouse
+        /// </summary>
         public static int MouseX
         {
             get
-            {
-                int x;
-                int y;
-                SDL_GetMouseState(out x, out y);
-                return x;
-            }
+            { return mouse.MouseX; }
         }
 
+        /// <summary>
+        /// The Y-coordinate of the mouse
+        /// </summary>
         public static int MouseY
         {
             get
-            {
-                int x;
-                int y;
-                SDL_GetMouseState(out x, out y);
-                return y;
-            }
+            { return mouse.MouseY; }
         }
 
+        /// <summary>
+        /// The X-coordinate of the mouse during the previous Draw
+        /// </summary>
+        public static int PMouseX
+        {
+            get { return mouse.PMouseX; }
+        }
+
+        /// <summary>
+        /// The Y-coordinate of the mouse during the previous Draw
+        /// </summary>
+        public static int PMouseY
+        {
+            get { return mouse.PMouseY; }
+        }
+
+        /// <summary>
+        /// true if any mouse button is currently being pressed, otherwise false
+        /// </summary>
+        public static bool MousePressed
+        {
+            get { return mouse.AnyButtonDown(); }
+        }
+
+        /// <summary>
+        /// The last pressed mouse button. Is either LEFT, MIDDLE or RIGHT
+        /// </summary>
+        public static uint MouseButton
+        {
+            get { return mouse.MouseButton; }
+        }
+
+        #endregion
+
+
+        /// <summary>
+        /// Draws a square in the currently selected color
+        /// </summary>
+        /// <param name="x">X-coordinate of the top left corner of the square</param>
+        /// <param name="y">Y-coordinate of the top left corner of the square</param>
+        /// <param name="extent">The length of the squares side</param>
         public static void Square(float x, float y, float extent)
         {
             SDL_Rect drawRect;
@@ -124,9 +276,22 @@ namespace ProcSharpCore
             drawRect.y = (int)y;
             drawRect.h = (int)extent;
             drawRect.w = (int)extent;
+
+            // Draw the filling
+            SetColor(fillColor);
+            SDL_RenderFillRect(renderer, ref drawRect);
+            // Draw the stroke
+            SetColor(strokeColor);
             SDL_RenderDrawRect(renderer, ref drawRect);
+            
         }
 
+        /// <summary>
+        /// Clears the background with the specified color
+        /// </summary>
+        /// <param name="v1">Red part of the color, 0 - 255</param>
+        /// <param name="v2">Green part of the color, 0 - 255</param>
+        /// <param name="v3">Blue part of the color, 0 - 255</param>
         public static void Background(float v1, float v2, float v3)
         {
             byte currentRed;

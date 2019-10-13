@@ -26,23 +26,34 @@ namespace ConsoleApp1
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ProcSharpCore;
 using static ProcSharpCore.ProcSharp;
 
-namespace ConsoleApp1
+namespace ProcSharpUser
 {
     class Game
     {
         public void Setup()
         {
-            Color(255, 255, 255, 255);
+            Size(480, 120);
         }
 
         public void Draw()
         {
-            Background(0, 100, 100);
-            Color(255, 0, 0, 0);
-            Square(MouseX, MouseY, 50);
+            if (MousePressed)
+            {
+                Fill(0);
+            }
+            else
+            {
+                Fill(255);
+            }
+            Square(MouseX, MouseY, 80);
         }
+
     }
 }
 ```
+This is a screenshot from the example program.
+
+![Screenshot from example program](procsharp_screenshot.png "Screenshot from example program")
