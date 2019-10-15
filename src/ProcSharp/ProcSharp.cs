@@ -16,6 +16,7 @@ namespace ProcSharpCore
 
         private static Initializer initializer;
         private static Mouse mouse;
+        private static ContentManager contentManager;
         
         private static SDL_Color fillColor;
         private static SDL_Color strokeColor;
@@ -61,16 +62,16 @@ namespace ProcSharpCore
 
             // Set up all services
             mouse = new Mouse(gameType, gameObject);
-
-            var userSetup = gameType.GetMethod("Setup");
-
-            // Call setup from the user
-            userSetup?.Invoke(gameObject, null);
+            contentManager = new ContentManager(renderer);            
 
             SDL_RenderClear(renderer);
+
+            // Call setup from the user
+            var userSetup = gameType.GetMethod("Setup");
+            userSetup?.Invoke(gameObject, null);
+            
             SDL_RenderPresent(renderer);
             
-
             // Start the main loop
             MainLoop();
         }
@@ -122,6 +123,9 @@ namespace ProcSharpCore
         private static void InternalExit()
         {
             // CLEANUP
+
+            contentManager.Destroy();
+
             SDL_DestroyRenderer(renderer);
             SDL_DestroyWindow(window);
             SDL_Quit();
@@ -258,6 +262,54 @@ namespace ProcSharpCore
         public static uint MouseButton
         {
             get { return mouse.MouseButton; }
+        }
+
+        #endregion
+
+        #region Images
+
+        /// <summary>
+        /// Loads the image with the specified filename
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        public static PImage LoadImage(string file)
+        {
+            return contentManager.LoadImage(file);
+        }
+
+        /// <summary>
+        /// Draws an image onto the screen
+        /// </summary>
+        /// <param name="pimage">The PImage to draw</param>
+        /// <param name="x">X-coordinate of the top left corner</param>
+        /// <param name="y">Y-coordinate of the top left corner</param>
+        public static void Image(PImage pimage, float x, float y)
+        {
+            SDL_Rect destRect;
+            destRect.x = (int)x;
+            destRect.y = (int)y;
+            destRect.w = pimage.width;
+            destRect.h = pimage.height;
+            SDL_RenderCopy(renderer, pimage.texture, IntPtr.Zero, ref destRect);
+        }
+
+        /// <summary>
+        /// Draws an image onto the screen
+        /// </summary>
+        /// <param name="pimage"></param>
+        /// <param name="x">X-coordinate of the top left corner</param>
+        /// <param name="y">Y-coordinate of the top left corner</param>
+        /// <param name="width">The width that the image will be drawn in</param>
+        /// <param name="height">The height that the image will be drawn in</param>
+        public static void Image(PImage pimage, float x, float y, float width, float height)
+        {
+            SDL_Rect destRect;
+            destRect.x = (int)x;
+            destRect.y = (int)y;
+            destRect.w = (int)width;
+            destRect.h = (int)height;
+            SDL_RenderCopy(renderer, pimage.texture, IntPtr.Zero, ref destRect);
         }
 
         #endregion

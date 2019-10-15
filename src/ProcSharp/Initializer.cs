@@ -11,7 +11,7 @@ namespace ProcSharpCore
 
         internal void Initialize(ref IntPtr window, ref IntPtr renderer)
         {
-            if (SDL_Init(SDL_INIT_VIDEO) < 0)
+            if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
             {
                 throw new Exception(SDL_GetError());
             }
