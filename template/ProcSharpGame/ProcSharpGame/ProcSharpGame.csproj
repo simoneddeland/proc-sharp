@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ProcSharp" Version="0.0.5" />
+    <PackageReference Include="ProcSharp" Version="0.0.6" />
   </ItemGroup>
 
   <ItemGroup>
