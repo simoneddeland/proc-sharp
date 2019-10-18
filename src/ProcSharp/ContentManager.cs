@@ -12,10 +12,12 @@ namespace ProcSharpCore
         Dictionary<string, IntPtr> images = new Dictionary<string, IntPtr>();
 
         IntPtr renderer;
+        string contentFolderPath;
 
-        public ContentManager(IntPtr renderer)
+        public ContentManager(IntPtr renderer, string contentFolderPath)
         {
             this.renderer = renderer;
+            this.contentFolderPath = contentFolderPath;
         }
 
         public PImage LoadImage(string url)
@@ -27,6 +29,8 @@ namespace ProcSharpCore
 
         IntPtr LoadTexture(string url)
         {
+
+            url = contentFolderPath + url;
 
             if (images.ContainsKey(url))
             {

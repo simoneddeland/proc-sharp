@@ -62,7 +62,7 @@ namespace ProcSharpCore
 
             // Set up all services
             mouse = new Mouse(gameType, gameObject);
-            contentManager = new ContentManager(renderer);            
+            contentManager = new ContentManager(renderer, "content/");            
 
             SDL_RenderClear(renderer);
 
