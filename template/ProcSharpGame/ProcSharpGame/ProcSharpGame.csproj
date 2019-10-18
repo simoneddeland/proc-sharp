@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <ApplicationIcon />
+    <StartupObject />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ProcSharp" Version="0.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="content\" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /y /d  &quot;$(ProjectDir)lib\*.dll&quot; &quot;$(TargetDir)&quot;&#xD;&#xA;xcopy /y /d /e &quot;$(ProjectDir)content&quot; &quot;$(TargetDir)\content\&quot;" />
+  </Target>
+
+</Project>
