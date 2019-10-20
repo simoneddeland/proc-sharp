@@ -21,7 +21,7 @@ namespace ProcSharpCore
         private static SDL_Color fillColor;
         private static SDL_Color strokeColor;
 
-        private static Random InternalRandom;
+        private static Random internalRandom;
 
         #region PUBLIC_CONSTANTS
 
@@ -325,12 +325,12 @@ namespace ProcSharpCore
                 return 0;
             }
 
-            if (InternalRandom == null)
+            if (internalRandom == null)
             {
-                InternalRandom = new Random();
+                internalRandom = new Random();
             }
 
-            return (float)InternalRandom.NextDouble() * hi;
+            return (float)internalRandom.NextDouble() * hi;
         }
 
         public static float Random(float lo, float hi)
@@ -344,15 +344,15 @@ namespace ProcSharpCore
 
         public static float RandomGaussian()
         {
-            if (InternalRandom == null)
+            if (internalRandom == null)
             {
-                InternalRandom = new Random();
+                internalRandom = new Random();
             }
 
             // Use the Box-Muller transform to create a random Gaussian sample.
             // Note that we assume mean = 0 and stDev = 1.
-            double uniRand1 = 1.0 - InternalRandom.NextDouble();
-            double uniRand2 = 1.0 - InternalRandom.NextDouble();
+            double uniRand1 = 1.0 - internalRandom.NextDouble();
+            double uniRand2 = 1.0 - internalRandom.NextDouble();
             double randGaussian = Math.Sqrt(-2.0 * Math.Log(uniRand1)) * Math.Sin(2.0 * Math.PI * uniRand2);
 
             return (float) randGaussian;
@@ -360,7 +360,7 @@ namespace ProcSharpCore
 
         public static void RandomSeed(int seed)
         {
-            InternalRandom = new Random(seed);
+            internalRandom = new Random(seed);
         }
 
         public static void Noise()
