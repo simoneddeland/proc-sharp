@@ -4,7 +4,7 @@ using static SDL2.SDL;
 
 namespace ProcSharpCore
 {
-    public class ProcSharp
+    public static class ProcSharp
     {
         private static IntPtr window;
         private static IntPtr renderer;
@@ -16,6 +16,7 @@ namespace ProcSharpCore
 
         private static Initializer initializer;
         private static Mouse mouse;
+        private static Keyboard keyboard;
         private static ContentManager contentManager;
         
         private static SDL_Color fillColor;
@@ -62,7 +63,8 @@ namespace ProcSharpCore
 
             // Set up all services
             mouse = new Mouse(gameType, gameObject);
-            contentManager = new ContentManager(renderer, "content/");            
+            contentManager = new ContentManager(renderer, "content/");
+            keyboard = new Keyboard(gameType, gameObject);
 
             SDL_RenderClear(renderer);
 
@@ -105,6 +107,14 @@ namespace ProcSharpCore
 
                         case SDL_EventType.SDL_MOUSEWHEEL:
                             mouse.MouseWheel(e);
+                            break;
+
+                        case SDL_EventType.SDL_KEYDOWN:
+                            keyboard.KeyDown(e);
+                            break;
+
+                        case SDL_EventType.SDL_KEYUP:
+                            keyboard.KeyUp(e);
                             break;
 
                     }
@@ -251,7 +261,7 @@ namespace ProcSharpCore
         /// <summary>
         /// true if any mouse button is currently being pressed, otherwise false
         /// </summary>
-        public static bool MousePressed
+        public static bool MouseIsPressed
         {
             get { return mouse.AnyButtonDown(); }
         }
@@ -262,6 +272,26 @@ namespace ProcSharpCore
         public static uint MouseButton
         {
             get { return mouse.MouseButton; }
+        }
+
+        #endregion
+
+        #region Keyboard
+
+        /// <summary>
+        /// The keycode of the latest key that was pressed
+        /// </summary>
+        public static string Key
+        {
+            get { return keyboard.LatestKey(); }
+        }
+
+        /// <summary>
+        /// true if any key on the keyboard is currently pressed down
+        /// </summary>
+        public static bool KeyIsPressed
+        {
+            get { return keyboard.AnyKeyPressed(); }
         }
 
         #endregion
