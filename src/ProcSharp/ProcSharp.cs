@@ -21,6 +21,8 @@ namespace ProcSharpCore
         private static SDL_Color fillColor;
         private static SDL_Color strokeColor;
 
+        private static Random InternalRandom;
+
         #region PUBLIC_CONSTANTS
 
         /// <summary>
@@ -310,6 +312,59 @@ namespace ProcSharpCore
             destRect.w = (int)width;
             destRect.h = (int)height;
             SDL_RenderCopy(renderer, pimage.texture, IntPtr.Zero, ref destRect);
+        }
+
+        #endregion
+
+        #region Random
+
+        public static float Random(float hi)
+        {
+            if (hi == 0)
+            {
+                return 0;
+            }
+
+            if (InternalRandom == null)
+            {
+                InternalRandom = new Random();
+            }
+
+            return (float)InternalRandom.NextDouble() * hi;
+        }
+
+        public static float Random(float lo, float hi)
+        {
+            if (lo >= hi) return lo;
+
+            float diff = hi - lo;
+
+            return Random(diff) + lo;
+        }
+
+        public static void RandomGaussian()
+        {
+
+        }
+
+        public static void RandomSeed(int seed)
+        {
+            InternalRandom = new Random(seed);
+        }
+
+        public static void Noise()
+        {
+
+        }
+
+        public static void NoiseDetail()
+        {
+
+        }
+
+        public static void NoiseSeed()
+        {
+
         }
 
         #endregion
