@@ -342,9 +342,20 @@ namespace ProcSharpCore
             return Random(diff) + lo;
         }
 
-        public static void RandomGaussian()
+        public static float RandomGaussian()
         {
-            throw new NotImplementedException();
+            if (InternalRandom == null)
+            {
+                InternalRandom = new Random();
+            }
+
+            // Use the Box-Muller transform to create a random Gaussian sample.
+            // Note that we assume mean = 0 and stDev = 1.
+            double uniRand1 = 1.0 - InternalRandom.NextDouble();
+            double uniRand2 = 1.0 - InternalRandom.NextDouble();
+            double randGaussian = Math.Sqrt(-2.0 * Math.Log(uniRand1)) * Math.Sin(2.0 * Math.PI * uniRand2);
+
+            return (float) randGaussian;
         }
 
         public static void RandomSeed(int seed)
