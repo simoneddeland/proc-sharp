@@ -8,23 +8,6 @@ The recommended way of installing ProcSharp is to install the ProcSharp Visual S
 Create a new Console App (.NET Core) and add a reference to ProcSharp using NuGet. The following code shows how to set up a simple ProcSharp program. In addition to added ProcSharp as a NuGet reference you also need to include all native library references that SDL requires. They can be found [here](https://www.libsdl.org/download-2.0.php).
 
 ## Example programs
-### Program.cs
-```csharp
-using System;
-using ProcSharpCore;
-
-namespace ProcSharpUser
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            ProcSharp.Initialize(typeof(Game), new Game());
-        }
-    }
-}
-```
-
 ### Game.cs
 ```csharp
 using System;
@@ -58,6 +41,25 @@ namespace ProcSharpUser
     }
 }
 ```
+If you didn't install the ProcSharp templates as a Visual Studio extension, you need to edit your Program.cs to
+
+### Program.cs
+```csharp
+using System;
+using ProcSharpCore;
+
+namespace ProcSharpUser
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            ProcSharp.Initialize(typeof(Game), new Game());
+        }
+    }
+}
+```
+
 This is a screenshot from the example program.
 
 ![Screenshot from example program](procsharp_screenshot.png "Screenshot from example program")

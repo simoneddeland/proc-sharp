@@ -18,3 +18,10 @@ public static uint MouseButton
 The code that manages which mouse button was last pressed is contained inside the Mouse class.
 
 4. Create a pull request with your contribution.
+
+## Building and testing ProcSharp using the source
+The easiest way to get all dependencies set up without getting them from external sources is to:
+1. Copy the solution "ProcSharpGame" found in the template folder since it contains all dependencies needed except ProcSharp itself. Copy this folder to somewhere outside of the ProcSharp folder on your computer.
+2. Build the ProcSharp solution found in the src folder.
+3. Add a reference to the ProcSharp.dll produced in step 2 to the solution you copied in step 1.
+4. Make any changes you want in the ProcSharp source code and test them in the solution that you copied in step 1. Don't forget to rebuild ProcSharp after you made changes to the source code.
