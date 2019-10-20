@@ -344,7 +344,7 @@ namespace ProcSharpCore
 
         public static void RandomGaussian()
         {
-
+            throw new NotImplementedException();
         }
 
         public static void RandomSeed(int seed)
@@ -354,17 +354,17 @@ namespace ProcSharpCore
 
         public static void Noise()
         {
-
+            throw new NotImplementedException();
         }
 
         public static void NoiseDetail()
         {
-
+            throw new NotImplementedException();
         }
 
         public static void NoiseSeed()
         {
-
+            throw new NotImplementedException();
         }
 
         #endregion
