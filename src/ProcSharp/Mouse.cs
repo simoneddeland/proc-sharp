@@ -6,7 +6,7 @@ using static SDL2.SDL;
 
 namespace ProcSharpCore
 {
-    class Mouse
+    internal class Mouse
     {
 
         private int x = 0;
