@@ -1,14 +1,17 @@
 # ProcSharp
 An interpretation of the Processing framework in C#
 
-## Installing ProcSharp as a Visual Studio extension (recommended)
+## Installation
+### Installing ProcSharp as a Visual Studio extension (recommended)
 The recommended way of installing ProcSharp is to install the ProcSharp Visual Studio extension. It includes project templates for creating a ProcSharp app and also includes all native libraries that ProcSharp depends on. Install it through Visual Studio or read more about it [here](https://marketplace.visualstudio.com/items?itemName=ProcSharp.windows-app-template).
 
-## Installing ProcSharp using NuGet
+### Installing ProcSharp using NuGet
 Create a new Console App (.NET Core) and add a reference to ProcSharp using NuGet. The following code shows how to set up a simple ProcSharp program. In addition to added ProcSharp as a NuGet reference you also need to include all native library references that SDL requires. They can be found [here](https://www.libsdl.org/download-2.0.php).
 
-## Example programs
-### Game.cs
+## Usage
+Create a new ProcSharp App in Visual Studio, open upp the Game.cs file and write your code there. See out [project wiki](https://github.com/simoneddeland/proc-sharp/wiki) for an API reference.
+### Hello ProcSharp
+#### Game.cs
 ```csharp
 using System;
 using System.Collections.Generic;
@@ -43,7 +46,7 @@ namespace ProcSharpUser
 ```
 If you didn't install the ProcSharp templates as a Visual Studio extension, you need to edit your Program.cs to
 
-### Program.cs
+#### Program.cs
 ```csharp
 using System;
 using ProcSharpCore;
@@ -65,7 +68,7 @@ This is a screenshot from the example program.
 ![Screenshot from example program](procsharp_screenshot.png "Screenshot from example program")
 
 ### Drawing images
-The following example shows how to load and draw an image. The Program.cs is the same as in the previous example. The image file "moose.png" should be places in the folder called "content" which is included in the ProcSharp template.
+The following example shows how to load and draw an image. The image file "moose.png" should be places in the folder called "content" which is included in the ProcSharp template.
 
 ```csharp
 using System;
@@ -99,3 +102,11 @@ namespace ProcSharpUser
 }
 ```
 
+## Contributing
+See the [CONTRIBUTING.md](https://github.com/simoneddeland/proc-sharp/blob/master/CONTRIBUTING.md) for information on how to contribute to ProcSharp.
+
+## Credits
+...
+
+## License
+Licensed under the MIT license.

@@ -31,7 +31,6 @@ namespace ProcSharpCore
             pressedKeys.Add(latestKey);
             latestKey = SDL_GetKeyName(e.key.keysym.sym);            
             keyPressed?.Invoke(gameObject, null);
-            keyTyped?.Invoke(gameObject, null);
         }
 
         internal void KeyUp(SDL_Event e)
