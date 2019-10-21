@@ -344,6 +344,249 @@ namespace ProcSharpCore
 
         #endregion
 
+        #region Random
+
+        private static Random internalRandom;
+
+        /// <summary>
+        /// Returns a random float between 0 and a given upper bound.
+        /// </summary>
+        /// <param name="hi">The upper bound of the range.</param>
+        /// <returns>A random float between 0 and a given upper bound.</returns>
+        public static float Random(float hi)
+        {
+            if (hi == 0)
+            {
+                return 0;
+            }
+
+            if (internalRandom == null)
+            {
+                internalRandom = new Random();
+            }
+
+            return (float) internalRandom.NextDouble() * hi;
+        }
+
+        /// <summary>
+        /// Returns a random float between two given boundaries.
+        /// </summary>
+        /// <param name="lo">The lower bound of the range.</param>
+        /// <param name="hi">The upper bound of the range.</param>
+        /// <returns>A random float between two given boundaries.</returns>
+        public static float Random(float lo, float hi)
+        {
+            if (lo >= hi) return lo;
+
+            float diff = hi - lo;
+
+            return Random(diff) + lo;
+        }
+
+        /// <summary>
+        /// Returns a float from a random series of numbers having a mean of 0 and standard deviation of 1.
+        /// </summary>
+        /// <returns>A random float from a normal distribution with a mean of 0 and a standard deviation of 1.</returns>
+        public static float RandomGaussian()
+        {
+            if (internalRandom == null)
+            {
+                internalRandom = new Random();
+            }
+
+            // Use the Box-Muller transform to produce a random Gaussian sample.
+            // Note that we assume mean = 0 and stDev = 1.
+            double uniRand1 = 1.0 - internalRandom.NextDouble();
+            double uniRand2 = 1.0 - internalRandom.NextDouble();
+            double randGaussian = Math.Sqrt(-2.0 * Math.Log(uniRand1)) * Math.Sin(2.0 * Math.PI * uniRand2);
+
+            return (float) randGaussian;
+        }
+
+        /// <summary>
+        /// Sets the seed value for the random generator used in the Random methods.
+        /// </summary>
+        /// <param name="seed">The seed with which the RNG will be initialized.</param>
+        public static void RandomSeed(int seed)
+        {
+            internalRandom = new Random(seed);
+        }
+
+        // Declare shared private constants for noise-related functions, which are implemented using Perlin noise.
+        // Perlin constants
+        private const int PerlinYWrapB = 4;
+        private const int PerlinYWrap = 1 << PerlinYWrapB;
+        private const int PerlinZWrapB = 8;
+        private const int PerlinZWrap = 1 << PerlinZWrapB;
+        private const int PerlinSize = 4095;
+
+        // Perlin variables that affect the "smoothness" of the noise
+        private static int perlinOctaves = 4; // PO = 4 results in "medium smooth" noise
+        private static float perlinAmpFalloff = 0.5f;
+
+        // Shared Perlin variables
+        private static int perlinTwopi, perlinPi;
+        private static float[] perlinCosTable;
+        private static float[] perlin;
+
+        private static Random perlinRandom;
+
+        // Pre-calculate the cosine lookup table once in Noise(x, y, z) and reuse it afterwards to improve performance
+        private static float[] cosLookupTable;
+        private const float SinCosPrecision = 0.5f;
+        private const int SinCosLength= (int) (360f / SinCosPrecision);
+
+        /// <summary>
+        /// Returns the Perlin noise value at specified coordinates.
+        /// </summary>
+        /// <param name="x">The x-coordinate in noise space.</param>
+        /// <param name="y">The y-coordinate in noise space.</param>
+        /// <param name="z">The z-coordinate in noise space.</param>
+        /// <returns>A float equal to the Perlin noise value at the specified x, y, and z coordinates.</returns>
+        public static float Noise(float x, float y, float z)
+        {
+            if (cosLookupTable == null)
+            {
+                float degToRad = (float)Math.PI / 180.0f;
+
+                cosLookupTable = new float[SinCosLength];
+                for (int i = 0; i < SinCosLength; i++)
+                {
+                    cosLookupTable[i] = (float) Math.Cos(i * degToRad * SinCosPrecision);
+                }
+            }
+
+            if (perlin == null)
+            {
+                if (perlinRandom == null) perlinRandom = new Random();
+
+                perlin = new float[PerlinSize + 1];
+                for (int i = 0; i < PerlinSize + 1; i++)
+                {
+                    perlin[i] = (float) perlinRandom.NextDouble();
+                }
+
+                perlinCosTable = cosLookupTable;
+                perlinTwopi = perlinPi = SinCosLength;
+                perlinPi >>= 1;
+            }
+
+            // Declare variables used in the Perlin noise algorithm
+            if (x < 0) x = -x;
+            if (y < 0) y = -y;
+            if (z < 0) z = -z;
+
+            int xi = (int)x, yi = (int)y, zi = (int)z;
+            float xf = x - xi;
+            float yf = y - yi;
+            float zf = z - zi;
+            float rxf, ryf;
+
+            float r = 0;
+            float ampl = 0.5f;
+
+            float n1, n2, n3;
+
+            // Repeat the Perlin noise algorithm as many times as specified by the level of detail (perlinOctaves)
+            for (int i = 0; i < perlinOctaves; i++)
+            {
+                int of = xi + (yi << PerlinYWrapB) + (zi << PerlinZWrapB);
+
+                rxf = NoiseFsc(xf);
+                ryf = NoiseFsc(yf);
+
+                n1 = perlin[of & PerlinSize];
+                n1 += rxf * (perlin[(of + 1) & PerlinSize] - n1);
+                n2 = perlin[(of + PerlinYWrap) & PerlinSize];
+                n2 += rxf * (perlin[(of + PerlinYWrap + 1) & PerlinSize] - n2);
+                n1 += ryf * (n2 - n1);
+
+                of += PerlinZWrap;
+                n2 = perlin[of & PerlinSize];
+                n2 += rxf * (perlin[(of + 1) & PerlinSize] - n2);
+                n3 = perlin[(of + PerlinYWrap) & PerlinSize];
+                n3 += rxf * (perlin[(of + PerlinYWrap + 1) & PerlinSize] - n3);
+                n2 += ryf * (n3 - n2);
+
+                n1 += NoiseFsc(zf) * (n2 - n1);
+
+                r += n1 * ampl;
+                ampl *= perlinAmpFalloff;
+                xi <<= 1; xf *= 2;
+                yi <<= 1; yf *= 2;
+                zi <<= 1; zf *= 2;
+
+                if (xf >= 1.0f) { xi++; xf--; }
+                if (yf >= 1.0f) { yi++; yf--; }
+                if (zf >= 1.0f) { zi++; zf--; }
+            }
+
+            return r;
+        }
+
+        /// <summary>
+        /// Returns the Perlin noise value at specified x and y coordinates with z = 0.
+        /// </summary>
+        /// <param name="x">The x-coordinate in noise space.</param>
+        /// <param name="y">The y-coordinate in noise space.</param>
+        /// <returns>A float equal to the Perlin noise value at the specified x and y coordinates with z = 0.</returns>
+        public static float Noise(float x, float y)
+        {
+            return Noise(x, y, 0f);
+        }
+
+        /// <summary>
+        /// Returns the Perlin noise value at the specified x-coordinate with y = 0 and z = 0..
+        /// </summary>
+        /// <param name="x">The x-coordinate in noise space.</param>
+        /// <returns>A float equal to the Perlin noise value at the specified x, y, and z coordinates.</returns>
+        public static float Noise(float x)
+        {
+            return Noise(x, 0f, 0f);
+        }
+
+        /// <summary>
+        /// Returns a transformed version of cos(i) for a given float i for usage in the Perlin noise algorithm.
+        /// </summary>
+        /// <param name="i">The scalar by which pi will be multiplied in the transformation.</param>
+        /// <returns></returns>
+        private static float NoiseFsc(float i)
+        {
+            return 0.5f * (1.0f - perlinCosTable[(int) (i * perlinPi) % perlinTwopi]);
+        }
+
+        /// <summary>
+        /// Adjusts the level of detail produced by the Perlin noise function.
+        /// </summary>
+        /// <param name="levelOfDetail">The desired level of detail for the Perlin noise function.</param>
+        public static void NoiseDetail(int levelOfDetail)
+        {
+            if (levelOfDetail > 0) perlinOctaves = levelOfDetail;
+        }
+
+        /// <summary>
+        /// Adjusts the level of detail and character produced by the Perlin noise function.
+        /// </summary>
+        /// <param name="levelOfDetail">The desired level of detail for the Perlin noise function.</param>
+        /// <param name="falloff">The desired falloff factor for each octave of the level of detail.</param>
+        public static void NoiseDetail(int levelOfDetail, float falloff)
+        {
+            if (levelOfDetail > 0) perlinOctaves = levelOfDetail;
+            if (falloff > 0) perlinAmpFalloff = falloff;
+        }
+
+        /// <summary>
+        /// Sets the seed value for the random generator used in the Noise methods.
+        /// </summary>
+        /// <param name="seed">The seed with which the random generator will be initialized.</param>
+        public static void NoiseSeed(int seed)
+        {
+            perlinRandom = new Random(seed);
+            perlin = null; // Reset the Perlin table when changing the seed
+        }
+
+        #endregion
+
 
         /// <summary>
         /// Draws a square in the currently selected color
