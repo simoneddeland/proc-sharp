@@ -21,8 +21,6 @@ namespace ProcSharpCore
         private static SDL_Color fillColor;
         private static SDL_Color strokeColor;
 
-        private static Random internalRandom;
-
         #region PUBLIC_CONSTANTS
 
         /// <summary>
@@ -317,6 +315,8 @@ namespace ProcSharpCore
         #endregion
 
         #region Random
+
+        private static Random internalRandom;
 
         public static float Random(float hi)
         {
