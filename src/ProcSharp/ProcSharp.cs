@@ -330,7 +330,7 @@ namespace ProcSharpCore
                 internalRandom = new Random();
             }
 
-            return (float)internalRandom.NextDouble() * hi;
+            return (float) internalRandom.NextDouble() * hi;
         }
 
         public static float Random(float lo, float hi)
@@ -363,19 +363,139 @@ namespace ProcSharpCore
             internalRandom = new Random(seed);
         }
 
-        public static void Noise()
+        // Declare shared private constants for noise-related functions, which are implemented using Perlin noise.
+        // Perlin constants
+        private const int PerlinYWrapB = 4;
+        private const int PerlinYWrap = 1 << PerlinYWrapB;
+        private const int PerlinZWrapB = 8;
+        private const int PerlinZWrap = 1 << PerlinZWrapB;
+        private const int PerlinSize = 4095;
+
+        // Perlin variables that affect the "smoothness" of the noise
+        private static int perlinOctaves = 4; // PO = 4 results in "medium smooth" noise
+        private static float perlinAmpFalloff = 0.5f;
+
+        private static int perlinTwopi, perlinPi;
+        private static float[] perlinCosTable;
+        private static float[] perlin;
+
+        private static Random perlinRandom;
+
+        // Pre-calculate the cosine lookup table to improve performance
+        private static float[] cosLookupTable;
+        private const float SinCosPrecision = 0.5f;
+        private const int SinCosLength= (int) (360f / SinCosPrecision);
+
+        public static float Noise(float x, float y, float z)
         {
-            throw new NotImplementedException();
+            if (cosLookupTable == null)
+            {
+                float degToRad = (float)Math.PI / 180.0f;
+
+                cosLookupTable = new float[SinCosLength];
+                for (int i = 0; i < SinCosLength; i++)
+                {
+                    cosLookupTable[i] = (float) Math.Cos(i * degToRad * SinCosPrecision);
+                }
+            }
+
+            if (perlin == null)
+            {
+                if (perlinRandom == null) perlinRandom = new Random();
+
+                perlin = new float[PerlinSize + 1];
+                for (int i = 0; i < PerlinSize + 1; i++)
+                {
+                    perlin[i] = (float)perlinRandom.NextDouble();
+                }
+
+                perlinCosTable = cosLookupTable;
+                perlinTwopi = perlinPi = SinCosLength;
+                perlinPi >>= 1;
+            }
+
+            if (x < 0) x = -x;
+            if (y < 0) y = -y;
+            if (z < 0) z = -z;
+
+            int xi = (int)x, yi = (int)y, zi = (int)z;
+            float xf = x - xi;
+            float yf = y - yi;
+            float zf = z - zi;
+            float rxf, ryf;
+
+            float r = 0;
+            float ampl = 0.5f;
+
+            float n1, n2, n3;
+
+            for (int i = 0; i < perlinOctaves; i++)
+            {
+                int of = xi + (yi << PerlinYWrapB) + (zi << PerlinZWrapB);
+
+                rxf = NoiseFsc(xf);
+                ryf = NoiseFsc(yf);
+
+                n1 = perlin[of & PerlinSize];
+                n1 += rxf * (perlin[(of + 1) & PerlinSize] - n1);
+                n2 = perlin[(of + PerlinYWrap) & PerlinSize];
+                n2 += rxf * (perlin[(of + PerlinYWrap + 1) & PerlinSize] - n2);
+                n1 += ryf * (n2 - n1);
+
+                of += PerlinZWrap;
+                n2 = perlin[of & PerlinSize];
+                n2 += rxf * (perlin[(of + 1) & PerlinSize] - n2);
+                n3 = perlin[(of + PerlinYWrap) & PerlinSize];
+                n3 += rxf * (perlin[(of + PerlinYWrap + 1) & PerlinSize] - n3);
+                n2 += ryf * (n3 - n2);
+
+                n1 += NoiseFsc(zf) * (n2 - n1);
+
+                r += n1 * ampl;
+                ampl *= perlinAmpFalloff;
+                xi <<= 1; xf *= 2;
+                yi <<= 1; yf *= 2;
+                zi <<= 1; zf *= 2;
+
+                if (xf >= 1.0f) { xi++; xf--; }
+                if (yf >= 1.0f) { yi++; yf--; }
+                if (zf >= 1.0f) { zi++; zf--; }
+            }
+
+            return r;
         }
 
-        public static void NoiseDetail()
+        public static float Noise(float x, float y)
         {
-            throw new NotImplementedException();
+            return Noise(x, y, 0f);
         }
 
-        public static void NoiseSeed()
+        public static float Noise(float x)
         {
-            throw new NotImplementedException();
+            return Noise(x, 0f, 0f);
+        }
+
+        private static float NoiseFsc(float i)
+        {
+            // Use Bagel's cosine table instead of the regular one
+            return 0.5f * (1.0f - perlinCosTable[(int) (i * perlinPi) % perlinTwopi]);
+        }
+
+        public static void NoiseDetail(int levelOfDetail)
+        {
+            if (levelOfDetail > 0) perlinOctaves = levelOfDetail;
+        }
+
+        public static void NoiseDetail(int levelOfDetail, float falloff)
+        {
+            if (levelOfDetail > 0) perlinOctaves = levelOfDetail;
+            if (falloff > 0) perlinAmpFalloff = falloff;
+        }
+
+        public static void NoiseSeed(int seed)
+        {
+            perlinRandom = new Random(seed);
+            perlin = null; // Reset the Perlin table when changing the seed
         }
 
         #endregion
