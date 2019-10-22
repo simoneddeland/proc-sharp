@@ -335,9 +335,28 @@ namespace ProcSharpCore
             // Draw the stroke
             SetColor(strokeColor);
             SDL_RenderDrawRect(renderer, ref drawRect);
-            
+
         }
 
+        
+        /// <summary>
+        /// Draws a point, a coordinate in space at the dimension of one pixel
+        /// </summary>
+        /// <param name="x">x-coordinate of the point</param>
+        /// <param name="y">y-coordinate of the point</param>
+        public static void Point(float x, float y)
+        {
+            SDL_Point drawPoint;
+            drawPoint.x = (int)x;
+            drawPoint.y = (int)y;
+            
+            // Draw the stroke
+            SetColor(strokeColor);
+            SDL_RenderDrawPoint(renderer, drawPoint.x, drawPoint.y);
+
+        }
+
+        
         /// <summary>
         /// Clears the background with the specified color
         /// </summary>
