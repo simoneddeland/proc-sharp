@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <RootNamespace>ProcSharpCore</RootNamespace>
-    <Version>0.0.5</Version>
+    <Version>0.0.8</Version>
     <PackageProjectUrl>https://github.com/simoneddeland/proc-sharp</PackageProjectUrl>
     <RepositoryUrl>https://github.com/simoneddeland/proc-sharp</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
