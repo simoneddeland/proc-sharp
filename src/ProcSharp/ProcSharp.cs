@@ -337,8 +337,7 @@ namespace ProcSharpCore
             SDL_RenderDrawRect(renderer, ref drawRect);
 
         }
-
-        
+                
         /// <summary>
         /// Draws a point, a coordinate in space at the dimension of one pixel
         /// </summary>
@@ -356,6 +355,29 @@ namespace ProcSharpCore
 
         }
 
+        /// <summary>
+        /// Draws a rectangle to the screen
+        /// </summary>
+        /// <param name="a">x-coordinate of the rectangle by default</param>
+        /// <param name="b">y-coordinate of the rectangle by default</param>
+        /// <param name="c">width of the rectangle by default</param>
+        /// <param name="d">height of the rectangle by default</param>
+        public static void Rectangle(float a, float b, float c, float d)
+        {
+            SDL_Rect drawRect;
+            drawRect.x = (int)a;
+            drawRect.y = (int)b;
+            drawRect.h = (int)c;
+            drawRect.w = (int)d;
+
+            // Draw the filling
+            SetColor(fillColor);
+            SDL_RenderFillRect(renderer, ref drawRect);
+            // Draw the stroke
+            SetColor(strokeColor);
+            SDL_RenderDrawRect(renderer, ref drawRect);
+
+        }
         
         /// <summary>
         /// Clears the background with the specified color
