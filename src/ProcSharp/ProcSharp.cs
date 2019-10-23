@@ -629,6 +629,32 @@ namespace ProcSharpCore
 
         }
 
+        /// <summary>
+        /// Draws a line (a direct path between two points) to the screen. 
+        /// </summary>
+        /// <param name="x1">x-coordinate of the first point</param>
+        /// <param name="y1">y-coordinate of the first point</param>
+        /// <param name="x2">x-coordinate of the second point</param>
+        /// <param name="y2">y-coordinate of the second point</param>
+        public static void Line(float x1, float y1, float x2, float y2)
+        {
+            SDL_Point pointA;
+            SDL_Point pointB;
+
+            pointA.x = (int)x1;
+            pointA.y = (int)y1;
+
+            pointB.x = (int)x2;
+            pointB.y = (int)y2;
+
+            // Draw the stroke
+            SetColor(strokeColor);
+            SDL_RenderDrawLine(renderer, pointA.x, pointA.y, pointB.x, pointB.y);
+
+        }
+
+
+
         
         /// <summary>
         /// Clears the background with the specified color
