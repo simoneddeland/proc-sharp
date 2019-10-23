@@ -378,7 +378,39 @@ namespace ProcSharpCore
             SDL_RenderDrawRect(renderer, ref drawRect);
 
         }
-        
+
+        /// <summary>
+        /// Draw a triangle. It is a plane created by connecting three points. 
+        /// </summary>
+        /// <param name="x1">x-coordinate of the first point</param>
+        /// <param name="y1">y-coordinate of the first point</param>
+        /// <param name="x2">x-coordinate of the second point</param>
+        /// <param name="y2">y-coordinate of the second point</param>
+        /// <param name="x3">x-coordinate of the third point</param>
+        /// <param name="y3">y-coordinate of the third point</param>
+        public static void Triangle(float x1, float y1, float x2, float y2, float x3, float y3)
+        {
+            SDL_Point pointA;
+            SDL_Point pointB;
+            SDL_Point pointC;
+
+            pointA.x = (int)x1;
+            pointA.y = (int)y1;
+
+            pointB.x = (int)x2;
+            pointB.y = (int)y2;
+
+            pointC.x = (int)x3;
+            pointC.y = (int)y3;
+
+            // Draw the stroke
+            SetColor(strokeColor);
+            SDL_RenderDrawLine(renderer, pointA.x, pointA.y, pointB.x, pointB.y);
+            SDL_RenderDrawLine(renderer, pointB.x, pointB.y, pointC.x, pointC.y);
+            SDL_RenderDrawLine(renderer, pointC.x, pointC.y, pointA.x, pointA.y);
+
+        }
+
         /// <summary>
         /// Clears the background with the specified color
         /// </summary>
