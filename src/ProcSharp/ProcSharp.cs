@@ -609,9 +609,8 @@ namespace ProcSharpCore
             SetColor(strokeColor);
             SDL_RenderDrawRect(renderer, ref drawRect);
 
-        }
-
-        
+        }           
+    
         /// <summary>
         /// Draws a point, a coordinate in space at the dimension of one pixel
         /// </summary>
@@ -626,6 +625,101 @@ namespace ProcSharpCore
             // Draw the stroke
             SetColor(strokeColor);
             SDL_RenderDrawPoint(renderer, drawPoint.x, drawPoint.y);
+
+        }
+
+        /// <summary>
+        /// Draws a rectangle to the screen
+        /// </summary>
+        /// <param name="a">x-coordinate of the rectangle by default</param>
+        /// <param name="b">y-coordinate of the rectangle by default</param>
+        /// <param name="c">width of the rectangle by default</param>
+        /// <param name="d">height of the rectangle by default</param>
+        public static void Rectangle(float a, float b, float c, float d)
+        {
+            SDL_Rect drawRect;
+            drawRect.x = (int)a;
+            drawRect.y = (int)b;
+            drawRect.h = (int)c;
+            drawRect.w = (int)d;
+
+            // Draw the filling
+            SetColor(fillColor);
+            SDL_RenderFillRect(renderer, ref drawRect);
+            // Draw the stroke
+            SetColor(strokeColor);
+            SDL_RenderDrawRect(renderer, ref drawRect);
+
+        }
+
+        /// <summary>
+        /// Draw a triangle. It is a plane created by connecting three points. 
+        /// </summary>
+        /// <param name="x1">x-coordinate of the first point</param>
+        /// <param name="y1">y-coordinate of the first point</param>
+        /// <param name="x2">x-coordinate of the second point</param>
+        /// <param name="y2">y-coordinate of the second point</param>
+        /// <param name="x3">x-coordinate of the third point</param>
+        /// <param name="y3">y-coordinate of the third point</param>
+        public static void Triangle(float x1, float y1, float x2, float y2, float x3, float y3)
+        {
+            SDL_Point pointA;
+            SDL_Point pointB;
+            SDL_Point pointC;
+
+            pointA.x = (int)x1;
+            pointA.y = (int)y1;
+
+            pointB.x = (int)x2;
+            pointB.y = (int)y2;
+
+            pointC.x = (int)x3;
+            pointC.y = (int)y3;
+
+            // Draw the stroke
+            SetColor(strokeColor);
+            SDL_RenderDrawLine(renderer, pointA.x, pointA.y, pointB.x, pointB.y);
+            SDL_RenderDrawLine(renderer, pointB.x, pointB.y, pointC.x, pointC.y);
+            SDL_RenderDrawLine(renderer, pointC.x, pointC.y, pointA.x, pointA.y);
+
+        }
+        
+        /// <summary>
+        /// Draw a Quad. A quad is a quadrilateral, a four sided polygon. 
+        /// </summary>
+        /// <param name="x1">x-coordinate of the first point</param>
+        /// <param name="y1">y-coordinate of the first point</param>
+        /// <param name="x2">x-coordinate of the second point</param>
+        /// <param name="y2">y-coordinate of the second point</param>
+        /// <param name="x3">x-coordinate of the third point</param>
+        /// <param name="y3">y-coordinate of the third point</param>
+        /// <param name="x4">x-coordinate of the fourth point</param>
+        /// <param name="y4">y-coordinate of the fourth point</param>
+        public static void Quad(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
+        {
+            SDL_Point pointA;
+            SDL_Point pointB;
+            SDL_Point pointC;
+            SDL_Point pointD;
+
+            pointA.x = (int)x1;
+            pointA.y = (int)y1;
+
+            pointB.x = (int)x2;
+            pointB.y = (int)y2;
+
+            pointC.x = (int)x3;
+            pointC.y = (int)y3;
+
+            pointD.x = (int)x4;
+            pointD.y = (int)y4;
+
+            // Draw the stroke
+            SetColor(strokeColor);
+            SDL_RenderDrawLine(renderer, pointA.x, pointA.y, pointB.x, pointB.y);
+            SDL_RenderDrawLine(renderer, pointB.x, pointB.y, pointC.x, pointC.y);
+            SDL_RenderDrawLine(renderer, pointC.x, pointC.y, pointD.x, pointD.y);
+            SDL_RenderDrawLine(renderer, pointD.x, pointD.y, pointA.x, pointA.y);
 
         }
 
@@ -652,41 +746,7 @@ namespace ProcSharpCore
             SDL_RenderDrawLine(renderer, pointA.x, pointA.y, pointB.x, pointB.y);
 
         }
-
-        /// <summary>
-        /// A triangle is a plane created by connecting three points.
-        /// </summary>
-        /// <param name="x1">x-coordinate of the first point</param>
-        /// <param name="y1">y-coordinate of the first point</param>
-        /// <param name="x2">x-coordinate of the second point</param>
-        /// <param name="y2">y-coordinate of the second point</param>
-        /// <param name="x3">x-coordinate of the third point</param>
-        /// <param name="y3">y-coordinate of the third point</param>
-        public static void Triangle(float x1, float y1, float x2, float y2, float x3, float y3)
-        {
-            SDL_Point pointA;
-            SDL_Point pointB;
-            SDL_Point pointC;
-
-            pointA.x = (int)x1;
-            pointA.y = (int)y1;
-
-            pointB.x = (int)x2;
-            pointB.y = (int)y2;
-
-            pointC.x = (int)x3;
-            pointC.y = (int)y3;
-
-            // Draw the stroke
-            SetColor(strokeColor);
-            SDL_RenderDrawLine(renderer, pointA.x, pointA.y, pointB.x, pointB.y);
-            SDL_RenderDrawLine(renderer, pointA.x, pointA.y, pointC.x, pointC.y);
-            SDL_RenderDrawLine(renderer, pointC.x, pointC.y, pointB.x, pointB.y);
-        }
-
-
-
-        
+      
         /// <summary>
         /// Clears the background with the specified color
         /// </summary>
