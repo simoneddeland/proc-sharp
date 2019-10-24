@@ -18,6 +18,7 @@ This is the official API documentation of ProcSharp.
 ### 2D Primitives
 | Name in ProcSharp    | Name in Processing          |
 | ------------- |-------------|
+| Line()    | [line()](https://processing.org/reference/line_.html) |
 | Square()    | [square()](https://processing.org/reference/square_.html) |
 
 ## Input
