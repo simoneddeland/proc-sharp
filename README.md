@@ -9,7 +9,7 @@ The recommended way of installing ProcSharp is to install the ProcSharp Visual S
 Create a new Console App (.NET Core) and add a reference to ProcSharp using NuGet. The following code shows how to set up a simple ProcSharp program. In addition to added ProcSharp as a NuGet reference you also need to include all native library references that SDL requires. They can be found [here](https://www.libsdl.org/download-2.0.php).
 
 ## Usage
-Create a new ProcSharp App in Visual Studio, open upp the Game.cs file and write your code there. See out [project wiki](https://github.com/simoneddeland/proc-sharp/wiki) for an API reference.
+Create a new ProcSharp App in Visual Studio, open upp the Game.cs file and write your code there. See out [website](https://simoneddeland.github.io/proc-sharp/) on GitHub Pagesfor an API reference.
 ### Hello ProcSharp
 #### Game.cs
 ```csharp

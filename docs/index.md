@@ -19,6 +19,7 @@ This is the official API documentation of ProcSharp.
 | Name in ProcSharp    | Name in Processing          |
 | ------------- |-------------|
 | Line()    | [line()](https://processing.org/reference/line_.html) |
+| Point()    | [point()](https://processing.org/reference/point_.html) |
 | Square()    | [square()](https://processing.org/reference/square_.html) |
 
 ## Input
@@ -58,7 +59,7 @@ This is the official API documentation of ProcSharp.
 
 | Name in ProcSharp    | Name in Processing          |
 | ------------- |-------------|
-| PImage   | [PImage)](https://processing.org/reference/PImage.html) |
+| PImage   | [PImage()](https://processing.org/reference/PImage.html) |
 
 ### Loading & Displaying
 | Name in ProcSharp    | Name in Processing          |
