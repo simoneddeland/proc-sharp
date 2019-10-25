@@ -724,6 +724,61 @@ namespace ProcSharpCore
         }
 
         /// <summary>
+        /// Draws an ellipse (oval) to the screen. An ellipse with equal width and height is a circle. 
+        /// </summary>
+        /// <param name="x0">x-coordinate of the first point</param>
+        /// <param name="y0">y-coordinate of the first point</param>
+        /// <param name="radiusX">width of the ellipse by default</param>
+        /// <param name="radiusY">height of the ellipse by default</param>
+        public static void Ellipse(float x0, float y0, float radiusX, float radiusY)
+        {
+            SDL_Point point0;
+            point0.x = (int)x0;
+            point0.y = (int)y0;
+
+            float pi = 3.1415926535897932384626F;
+            float pih = pi / 2.0F;
+
+            const int prec = 27;
+            float theta = 0;
+
+            int x = (int)(radiusX * Math.Cos(theta));
+            int y = (int)(radiusY * Math.Sin(theta));
+            int x1 = x;
+            int y1 = y;
+
+            // Draw the stroke
+            SetColor(strokeColor);
+
+            float step = pih / prec;
+            for (theta = step; theta <= pih; theta += step)
+            {
+                x1 = (int)(radiusX * Math.Cos(theta) + 0.5); 
+                y1 = (int)(radiusY * Math.Sin(theta) + 0.5); 
+
+                if ((x != x1) || (y != y1))
+                {
+                    SDL_RenderDrawLine(renderer, point0.x + x, point0.y - y, point0.x + x1, point0.y - y1);
+                    SDL_RenderDrawLine(renderer, point0.x - x, point0.y - y, point0.x - x1, point0.y - y1);
+                    SDL_RenderDrawLine(renderer, point0.x - x, point0.y + y, point0.x - x1, point0.y + y1);
+                    SDL_RenderDrawLine(renderer, point0.x + x, point0.y + y, point0.x + x1, point0.y + y1);
+                }
+                
+                x = x1;
+                y = y1;
+            }
+
+            if (x != 0)
+            {
+                x = 0;
+                SDL_RenderDrawLine(renderer, point0.x + x, point0.y - y, point0.x + x1, point0.y - y1);
+                SDL_RenderDrawLine(renderer, point0.x - x, point0.y - y, point0.x - x1, point0.y - y1);
+                SDL_RenderDrawLine(renderer, point0.x - x, point0.y + y, point0.x - x1, point0.y + y1);
+                SDL_RenderDrawLine(renderer, point0.x + x, point0.y + y, point0.x + x1, point0.y + y1);
+            }
+        }
+
+        /// <summary>
         /// Draws a line (a direct path between two points) to the screen. 
         /// </summary>
         /// <param name="x1">x-coordinate of the first point</param>
