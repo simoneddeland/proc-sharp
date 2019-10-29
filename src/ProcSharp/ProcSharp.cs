@@ -136,8 +136,14 @@ namespace ProcSharpCore
 
             contentManager.Destroy();
 
+            foreach (var sf in SoundFile.soundFiles)
+            {
+                sf.Destroy();
+            }
+
             SDL_DestroyRenderer(renderer);
             SDL_DestroyWindow(window);
+            SDL_AudioQuit();
             SDL_Quit();
         }
 

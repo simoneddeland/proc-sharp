@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using SDL2;
 using static SDL2.SDL;
+using static SDL2.SDL_mixer;
 
 namespace ProcSharpCore
 {
@@ -31,8 +32,17 @@ namespace ProcSharpCore
             {
                 throw new Exception($"Unable to create a window. SDL. Error: {SDL_GetError()}");
             }
+            
+            InitializeAudio();
 
+        }
 
+        private void InitializeAudio()
+        {
+            if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 2048) < 0)
+            {
+                throw new Exception($"Unable to initialize audio: {SDL_GetError()}");
+            }
         }
     }
 }
