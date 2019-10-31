@@ -4,6 +4,7 @@ using System.Text;
 using SDL2;
 using static SDL2.SDL;
 using static SDL2.SDL_mixer;
+using static SDL2.SDL_ttf;
 
 namespace ProcSharpCore
 {
@@ -34,6 +35,11 @@ namespace ProcSharpCore
             }
             
             InitializeAudio();
+
+            if (TTF_Init() == -1)
+            {
+                throw new Exception("Could not initialize TTF: " + SDL_GetError());
+            }
 
         }
 

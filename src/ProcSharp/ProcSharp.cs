@@ -1,6 +1,9 @@
 ﻿using System;
 using SDL2;
 using static SDL2.SDL;
+using static SDL2.SDL_image;
+using static SDL2.SDL_mixer;
+using static SDL2.SDL_ttf;
 
 namespace ProcSharpCore
 {
@@ -21,6 +24,9 @@ namespace ProcSharpCore
         
         private static SDL_Color fillColor;
         private static SDL_Color strokeColor;
+
+        private static PFont activeFont;
+
 
         #region PUBLIC_CONSTANTS
 
@@ -141,9 +147,17 @@ namespace ProcSharpCore
                 sf.Destroy();
             }
 
+            foreach (var font in PFont.fonts)
+            {
+                font.Destroy();
+            }
+
             SDL_DestroyRenderer(renderer);
             SDL_DestroyWindow(window);
             SDL_AudioQuit();
+            TTF_Quit();
+            Mix_Quit();
+            IMG_Quit();            
             SDL_Quit();
         }
 
@@ -156,6 +170,7 @@ namespace ProcSharpCore
 
         #region Public methods
 
+        #region Colors and structure
         /// <summary>
         /// Sets the stroke color
         /// </summary>
@@ -228,6 +243,8 @@ namespace ProcSharpCore
         {
             quit = true;
         }
+
+        #endregion
 
         #region Mouse
         /// <summary>
@@ -593,6 +610,7 @@ namespace ProcSharpCore
 
         #endregion
 
+        #region Primitive shapes
 
         /// <summary>
         /// Draws a square in the currently selected color
@@ -826,6 +844,43 @@ namespace ProcSharpCore
             SDL_SetRenderDrawColor(renderer, currentRed, currentGreen, currentBlue, currentAlpha);
 
         }
+
+        #endregion
+
+        #region Fonts
+
+        /// <summary>
+        /// Creates a PFont witht the specified fontname and font size (in pt)
+        /// </summary>
+        /// <param name="fontname"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        public static PFont CreateFont(string fontname, int size)
+        {
+            return new PFont(fontname, size, renderer);
+        }
+
+        /// <summary>
+        /// Sets the active font used when writing text
+        /// </summary>
+        /// <param name="font"></param>
+        public static void TextFont(PFont font)
+        {
+            activeFont = font;
+        }
+
+        /// <summary>
+        /// Writes text using the active font
+        /// </summary>
+        /// <param name="text">The text to write</param>
+        /// <param name="x">x-position of the text</param>
+        /// <param name="y">y-position of the text</param>
+        public static void Text(string text, int x, int y)
+        {
+            activeFont.Text(text, x, y);
+        }
+
+        #endregion
 
         #endregion
     }
